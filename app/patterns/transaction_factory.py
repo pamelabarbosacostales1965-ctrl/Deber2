@@ -8,7 +8,6 @@ from decimal import Decimal
 
 
 class TransactionFactory:
-    # factory para crear transacciones validadas
     
     @staticmethod
     def create(
@@ -18,7 +17,7 @@ class TransactionFactory:
         from_account_id: AccountId = None,
         to_account_id: AccountId = None
     ) -> Transaction:
-        # crea una nueva transaccion validada
+        # crea una nueva transaccion
         
         # validar amount > 0
         if amount <= Decimal("0.00"):
