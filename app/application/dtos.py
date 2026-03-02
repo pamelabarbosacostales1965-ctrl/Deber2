@@ -42,12 +42,10 @@ class TransferRequest(BaseModel):
 
 # RESPONSE OBJECTS
 class CreateCustomerResponse(BaseModel):
-    # response para crear cliente
     customer_id: str
     name: str
     email: str
-    created_at: datetime
-
+    created_at: Optional[datetime] = None  # Customer no tiene created_at
 
 class CreateAccountResponse(BaseModel):
     # response para crear cuenta
@@ -97,11 +95,10 @@ class TransactionResponse(BaseModel):
 
 
 class AccountDetailResponse(BaseModel):
-    # response con detalles completos de cuenta
     account_id: str
     customer_id: str
     balance: float
     currency: str
     status: str
-    created_at: datetime
+    created_at: Optional[datetime] = None  # Account no tiene created_at
     transactions: List[TransactionResponse]
