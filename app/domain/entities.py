@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, Literal
 
 from .enums import AccountStatus, TransactionStatus, TransactionType, CurrencyType
 from .value_objects import CustomerId, AccountId, Email, Money
@@ -13,12 +14,16 @@ def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+LEDGER_DIRECTIONS = ("DEBIT", "CREDIT")
+LedgerDirection = Literal["DEBIT", "CREDIT"]
+
+
 @dataclass
 class Customer:
     id: CustomerId
     name: str
     email: Email
-    status: str = "ACTIVE"  # simple para MVP
+    status: str = "ACTIVE"
 
     def __post_init__(self):
         if not self.name or not self.name.strip():
@@ -69,10 +74,10 @@ class LedgerEntry:
     id: str
     account_id: AccountId
     transaction_id: str
-    direction: str  # "DEBIT" o "CREDIT"
+    direction: LedgerDirection  # "DEBIT" or "CREDIT"
     amount: Money
     created_at: datetime = field(default_factory=utcnow)
 
     def __post_init__(self):
-        if self.direction not in ("DEBIT", "CREDIT"):
+        if self.direction not in LEDGER_DIRECTIONS:
             raise DomainError("LedgerEntry.direction debe ser DEBIT o CREDIT")
