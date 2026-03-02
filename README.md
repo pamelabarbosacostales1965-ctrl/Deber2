@@ -155,8 +155,4 @@ Muestra errores de reglas (riesgo, insuficiencia de fondos). Consume únicamente
 - `db` (PostgreSQL).
 - Servicios de backend y frontend del proyecto.
 
----
 
-El contenido anterior organiza y clarifica las exigencias del proyecto, haciéndolo
-entendible y evaluable de acuerdo con los requerimientos de la asignatura.
-# Deber2
