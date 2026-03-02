@@ -6,6 +6,7 @@ from app.repositories.sqlalchemy_impl import (
     SQLAlchemyCustomerRepository,
     SQLAlchemyAccountRepository,
     SQLAlchemyTransactionRepository,
+    SQLAlchemyLedgerRepository,
 )
 
 from app.services.customer_service import CustomerService
@@ -35,26 +36,53 @@ app = FastAPI(
 from app.repositories.database import engine, Base
 Base.metadata.create_all(bind=engine)
 
+class RiskStrategyAdapter:
+    def __init__(self, strategy):
+        self._strategy = strategy
+
+    def evaluate(self, transaction) -> None:
+        from app.domain.exceptions import FraudDetected
+        amount = float(transaction.amount.amount)
+        if not self._strategy.validate(amount):
+            raise FraudDetected(f"Transacción rechazada por regla de riesgo")
+
+from decimal import Decimal
+from app.domain.value_objects import Money
+from app.domain.enums import CurrencyType
+
+class FeeStrategyAdapter:
+    def __init__(self, strategy):
+        self._strategy = strategy
+
+    def calculate_fee(self, amount: Money) -> Money:
+        fee_float = self._strategy.calculate(float(amount.amount))
+        return Money(Decimal(str(fee_float)), amount.currency)
+
 # Dependency: build facade per request
 def get_facade(session: Session = Depends(get_session)) -> BankingFacade:
-    # repositories
+    # 1. Repositories
     customer_repo = SQLAlchemyCustomerRepository(session)
     account_repo = SQLAlchemyAccountRepository(session)
     transaction_repo = SQLAlchemyTransactionRepository(session)
+    ledger_repo = SQLAlchemyLedgerRepository(session)
 
-    # services
+    # 2. Strategies 
+    fee_strategy = FeeStrategyAdapter(PercentFee(percentage=0.01))
+    risk_strategy = RiskStrategyAdapter(MaxAmountStrategy(limit=10000.0))
+
+    # 3. Services
     customer_service = CustomerService(customer_repo)
     account_service = AccountService(account_repo, customer_repo)
     transaction_service = TransactionService(
-        transaction_repo,
-        account_repo
+        account_repo=account_repo,
+        transaction_repo=transaction_repo,
+        ledger_repo=ledger_repo,
+        session=session,
+        fee_strategy=fee_strategy,
+        risk_strategy=risk_strategy,
     )
 
-    # strategies
-    fee_strategy = PercentFee(percentage=0.01)
-    risk_strategy = MaxAmountStrategy(limit=10000.0)
-
-    # facade
+    # 4. Facade
     return BankingFacade(
         customer_service,
         account_service,
@@ -62,7 +90,6 @@ def get_facade(session: Session = Depends(get_session)) -> BankingFacade:
         fee_strategy,
         risk_strategy
     )
-
 
 @app.get("/health")
 def health():
