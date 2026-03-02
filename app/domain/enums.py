@@ -21,5 +21,5 @@ class TransactionType(str, Enum):
 
 
 class CurrencyType(str, Enum):
-    USD = "USD"   # puedes dejar solo USD, pero modelado
+    USD = "USD"   
     EUR = "EUR"
