@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:15
+    container_name: fintech_db
+    restart: always
+    environment:
+      POSTGRES_USER: fintech
+      POSTGRES_PASSWORD: fintech
+      POSTGRES_DB: fintech
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fintech_api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://fintech:fintech@db:5432/fintech
+    ports:
+      - "8000:8000"
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: fintech_ui
+    restart: always
+    depends_on:
+      - api
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+
+volumes:
+  postgres_data:
