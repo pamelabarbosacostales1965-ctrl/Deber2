@@ -1,12 +1,11 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import List
-from decimal import Decimal
 
 from .entities import Account, LedgerEntry, Transaction
 from .enums import AccountStatus, TransactionStatus, TransactionType
-from .value_objects import Money
-from .exceptions import AccountFrozen, InsufficientFundsError, DomainError
+from .exceptions import AccountFrozen, DomainError, InsufficientFundsError
 
 
 @dataclass
@@ -22,7 +21,7 @@ class BankingAggregate:
     def apply_deposit(self, tx: Transaction, credit_entry: LedgerEntry) -> None:
         self._assert_operable()
         if tx.type != TransactionType.DEPOSIT:
-            raise DomainError("apply_deposit requiere tx DEPOSIT")
+            raise DomainError("apply_deposit requiere una transacción de tipo DEPOSIT")
 
         self.account.balance = self.account.balance.add(tx.amount)
         self.ledger.append(credit_entry)
@@ -30,7 +29,7 @@ class BankingAggregate:
     def apply_withdraw(self, tx: Transaction, debit_entry: LedgerEntry) -> None:
         self._assert_operable()
         if tx.type != TransactionType.WITHDRAW:
-            raise DomainError("apply_withdraw requiere tx WITHDRAW")
+            raise DomainError("apply_withdraw requiere una transacción de tipo WITHDRAW")
 
         if self.account.balance.amount < tx.amount.amount:
             raise InsufficientFundsError("Fondos insuficientes")
