@@ -148,6 +148,77 @@ Muestra errores de reglas (riesgo, insuficiencia de fondos). Consume únicamente
 
 ---
 
+## 8. Setup Local y Pruebas
+
+### 8.1 Requisitos previos
+
+- Python 3.9+
+- Git
+- Docker y Docker Compose (para base de datos)
+- pip o conda
+
+### 8.2 Instalación local
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/Deber2.git
+cd Deber2
+
+# Crear e activar entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Iniciar base de datos con Docker Compose
+docker-compose up -d db
+
+# Ejecutar migraciones (si aplica)
+# python -m alembic upgrade head
+```
+
+### 8.3 Ejecutar la aplicación local
+
+```bash
+# Backend API (FastAPI)
+cd app
+uvicorn main:app --reload
+
+# Frontend (Streamlit) - en otra terminal
+cd frontend
+streamlit run home.py
+```
+
+### 8.4 Ejecutar pruebas
+
+```bash
+# Todos los tests
+pytest tests/
+
+# Tests con cobertura
+pytest tests/ --cov=app --cov-report=html
+
+# Tests de módulo específico
+pytest tests/test_domain.py -v
+pytest tests/test_services.py -v
+```
+
+### 8.5 Linting y formateo
+
+```bash
+# Verificar con pylint
+pylint app/
+
+# Formatear con black (opcional)
+black app/
+
+# Type checking con mypy
+mypy app/
+```
+
+---
+
 ## 9. DevOps: Docker Compose
 
 `docker-compose.yml` debe levantar:
@@ -159,3 +230,4 @@ Muestra errores de reglas (riesgo, insuficiencia de fondos). Consume únicamente
 
 El contenido anterior organiza y clarifica las exigencias del proyecto, haciéndolo
 entendible y evaluable de acuerdo con los requerimientos de la asignatura.
+# Deber2
