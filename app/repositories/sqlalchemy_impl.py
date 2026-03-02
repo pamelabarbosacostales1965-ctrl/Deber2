@@ -186,6 +186,7 @@ class SQLAlchemyCustomerRepository:
         else:
             self._s.add(_customer_to_orm(customer))
         self._s.flush()
+        self._s.commit() 
         return customer
 
     def find_by_id(self, customer_id: CustomerId) -> Optional[Customer]:
@@ -212,6 +213,7 @@ class SQLAlchemyAccountRepository:
         else:
             self._s.add(_account_to_orm(account))
         self._s.flush()
+        self._s.commit()
         return account
 
     def find_by_id(self, account_id: AccountId) -> Optional[Account]:
