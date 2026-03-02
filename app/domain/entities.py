@@ -15,10 +15,22 @@ def utcnow() -> datetime:
 
 @dataclass
 class Customer:
+    """
+    Domain entity representing a bank customer.
+    
+    Attributes:
+        id: Unique customer identifier
+        name: Customer's full name (non-empty)
+        email: Customer's email (EmailValue Object)
+        status: Account status (default: ACTIVE)
+    
+    Invariants:
+        - name must not be empty or whitespace-only
+    """
     id: CustomerId
     name: str
     email: Email
-    status: str = "ACTIVE"  # simple para MVP
+    status: str = "ACTIVE"
 
     def __post_init__(self):
         if not self.name or not self.name.strip():
@@ -27,14 +39,45 @@ class Customer:
 
 @dataclass
 class Account:
-    id: AccountId
-    customer_id: CustomerId
+    """
+    Domain entity representing a customer's bank account (wallet).
+    
+    Attributes:
+        id: Unique account identifier
+        customer_id: Reference to the account owner
+        currency: Account's currency (e.g., USD)
+        balance: Current balance as Money value object
+        status: Account status (default: ACTIVE)
+    
+    Invariants:
+        - balance currency must match account currency
+    """
+    """
+    Domain entity representing a financial transaction.
+    
+    Attributes:
+        id: Unique transaction identifier
+        type: Transaction type (DEPOSIT, WITHDRAW, TRANSFER)
+        amount: Transaction amount as Money value object
+        currency: Transaction currency
+        status: Transaction status (default: PENDING)
+        created_at: Timestamp of transaction creation (UTC)
+        from_account_id: Source account (for TRANSFER)
+        to_account_id: Destination account (for TRANSFER)
+    
+    Invariants:
+        - amount must be greater than 0
+        - transaction currency must match amount currency
+        - TRANSFER transactions must have both from and to accounts
+        - from_account_id cannot equal to_account_id
+    """
+    id: str
+    type: TransactionType
+    amount: Money
     currency: CurrencyType
-    balance: Money
-    status: AccountStatus = AccountStatus.ACTIVE
-
-    def __post_init__(self):
-        if self.balance.currency != self.currency:
+    status: TransactionStatus = TransactionStatus.PENDING
+    created_at: datetime = field(default_factory=utcnow)
+ance.currency != self.currency:
             raise DomainError("Account.balance.currency != Account.currency")
 
 
