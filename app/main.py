@@ -13,7 +13,7 @@ from app.services.account_service import AccountService
 from app.services.transaction_service import TransactionService
 
 from app.patterns.fee_strategy import PercentFee
-from app.patterns.risk_strategy import BasicRiskStrategy
+from app.patterns.risk_strategy import MaxAmountStrategy
 
 from app.application.facade import BankingFacade
 from app.application.dtos import (
@@ -52,7 +52,7 @@ def get_facade(session: Session = Depends(get_session)) -> BankingFacade:
 
     # strategies
     fee_strategy = PercentFee(percentage=0.01)
-    risk_strategy = BasicRiskStrategy(max_amount=10000)
+    risk_strategy = MaxAmountStrategy(limit=10000.0)
 
     # facade
     return BankingFacade(
