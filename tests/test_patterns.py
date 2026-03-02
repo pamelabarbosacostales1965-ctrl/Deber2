@@ -11,9 +11,8 @@ from app.domain.enums import TransactionType, TransactionStatus, CurrencyType
 from app.domain.value_objects import Money, AccountId
 from app.domain.exceptions import InvalidTransaction
 
-
+# tests para factory
 class TestTransactionFactory:
-    # tests para factory
     
     def test_create_valid_transaction(self):
         # factory crea transaccion valida
@@ -38,8 +37,8 @@ class TestTransactionFactory:
             )
 
 
+# tests para builder
 class TestTransactionBuilder:
-    # tests para builder
     
     def test_build_complete_transaction(self):
         # builder construye transaccion con todos los campos
@@ -68,8 +67,8 @@ class TestTransactionBuilder:
             TransactionBuilder().build()
 
 
+# tests para validacion de dtos
 class TestDTOs:
-    # tests para validacion de dtos
     
     def test_create_customer_request_valid(self):
         # dto valida datos correctos
