@@ -9,7 +9,6 @@ import uuid
 
 
 class TransactionBuilder:
-    # builder para construir transacciones
     
     def __init__(self):
         # inicializar builder con valores None

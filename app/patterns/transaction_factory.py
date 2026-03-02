@@ -8,7 +8,6 @@ from decimal import Decimal
 
 
 class TransactionFactory:
-    # factory para crear transacciones validadas
     
     @staticmethod
     def create(
@@ -18,7 +17,7 @@ class TransactionFactory:
         from_account_id: AccountId = None,
         to_account_id: AccountId = None
     ) -> Transaction:
-        # crea una nueva transaccion validada
+        # crea una nueva transaccion
         
         # validar amount > 0
         if amount <= Decimal("0.00"):
@@ -28,7 +27,7 @@ class TransactionFactory:
         if transaction_type not in [TransactionType.DEPOSIT, TransactionType.WITHDRAW, TransactionType.TRANSFER]:
             raise InvalidTransaction("Invalid transaction type")
         
-        # validar TRANSFER necesita ambas cuentas
+        # validar TRANSFER (necesita ambas cuentas)
         if transaction_type == TransactionType.TRANSFER:
             if not from_account_id or not to_account_id:
                 raise InvalidTransaction("TRANSFER requires from_account_id and to_account_id")
